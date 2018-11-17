@@ -1,0 +1,44 @@
+{
+    "name": "bor3y/apitemplate",
+    "description": ":description",
+    "license": "license",
+    "authors": [
+        {
+            "name": "Ahmed Elsayed",
+            "email": "sw.ahmed.elsayed@gmail.com",
+            "homepage": "author homepage"
+        }
+    ],
+    "homepage": "https://github.com/bor3y/apitemplate",
+    "keywords": ["Laravel", "ApiTemplate"],
+    "require": {
+        "illuminate/support": "~5",
+        "tymon/jwt-auth": "1.0.0-rc.3"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "~7.0",
+        "mockery/mockery": "^1.1",
+        "orchestra/testbench": "~3.0",
+        "sempro/phpunit-pretty-print": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Bor3y\\ApiTemplate\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Bor3y\\ApiTemplate\\Tests\\": "tests"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Bor3y\\ApiTemplate\\ApiTemplateServiceProvider"
+            ],
+            "aliases": {
+                "ApiTemplate": "Bor3y\\ApiTemplate\\Facades\\ApiTemplate"
+            }
+        }
+    }
+}
