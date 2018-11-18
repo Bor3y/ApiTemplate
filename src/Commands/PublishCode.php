@@ -39,10 +39,12 @@ class PublishCode extends Command
     {
         $this->publishApiHelpers();
         $this->publishAPiRequests();
+        $this->publishTranslations();
         $this->publishAPiMiddleware();
         $this->publishApiControllers();
 
         $this->generateKeys();
+        $this->info("Package published successfully");
     }
 
 
@@ -88,6 +90,16 @@ class PublishCode extends Command
             mkdir($api_dist, 0777, true);
         }
         $this->copyIfNotExist($api_source . DIRECTORY_SEPARATOR . "_AuthorizePublicApiRequests.php", $api_dist . DIRECTORY_SEPARATOR . "AuthorizePublicApiRequests.php");
+    }
+
+    private function publishTranslations(){
+        $api_dist = base_path('resources') . DIRECTORY_SEPARATOR . "lang" . DIRECTORY_SEPARATOR . "en";
+        $api_source = dirname (__DIR__, 1) . DIRECTORY_SEPARATOR . "resources" . DIRECTORY_SEPARATOR . "lang" . DIRECTORY_SEPARATOR . "en";
+        if (!file_exists($api_dist)) {
+            mkdir($api_dist, 0777, true);
+        }
+        $this->copyIfNotExist($api_source . DIRECTORY_SEPARATOR . "_error.php", $api_dist . DIRECTORY_SEPARATOR . "error.php");
+        $this->copyIfNotExist($api_source . DIRECTORY_SEPARATOR . "_success.php", $api_dist . DIRECTORY_SEPARATOR . "success.php");
     }
 
     private function copyIfNotExist($src, $dist){
