@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\API\Auth;
 
 use App\Helpers\API\API;
+use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\Auth\LoginRequest;
 use App\Http\Requests\API\Auth\RegisterRequest;
 use App\Http\Requests\API\Auth\TokenRefreshRequest;
+use Tymon\JWTAuth\Exceptions\TokenBlacklistedException;
 
 class AuthController extends Controller
 {
@@ -33,20 +35,32 @@ class AuthController extends Controller
         ];
 
 
-        return API::respond("OK", 200, $ret);
+        return API::respond(__("success.generic.ok"), 200, $ret);
+    }
+
+    public function user(Request $request){
+        $user = $request->user();
+
+        return API::respond(__("success.generic.ok"), 200, [
+            'user' => $user
+        ]);
     }
 
     public function logout()
     {
         $this->guard()->logout();
 
-        return API::respond("OK", 200);
+        return API::respond(__("success.generic.ok"), 200);
     }
 
     public function refreshToken(TokenRefreshRequest $request)
     {
 
-        $token = $this->guard()->refresh();
+        try{
+            $token = $this->guard()->refresh();
+        }catch (TokenBlacklistedException $exception){
+            return API::respond(__("error.generic.unauthorized"), 401);
+        }
 
         $ret = [
             "token_type" => "Bearer",
@@ -54,7 +68,7 @@ class AuthController extends Controller
             "access_token" => $token,
         ];
 
-        return API::respond("OK", 200, $ret);
+        return API::respond(__("success.generic.ok"), 200, $ret);
     }
 
     protected function guard()

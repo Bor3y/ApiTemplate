@@ -15,7 +15,7 @@ class PasswordController extends Controller
 
         if (\Hash::check($request->old_password, $user->password)) {
             $user->forceFill([
-                'password' => $request->new_password,
+                'password' => \Hash::make($request->new_password),
             ])->save();
         } else {
             return API::respond("incorrect old password", 400);
@@ -27,15 +27,8 @@ class PasswordController extends Controller
 
     public function sendResetLinkEmail(ResetPasswordRequest $request)
     {
-        if(count($this->users->findByField('email', $request->email)) != 0){
-            $response = $this->broker()->sendResetLink($request->only('email'));
-            return $response == \Password::RESET_LINK_SENT
-                ? API::respond(__('passwords.sent'), 200)
-                : API::respond(__($response), 400);
-        }
-        else {
-            return API::respond(__('passwords.user'), 403);
-        }
+      $response = $this->broker()->sendResetLink($request->only('email'));
+      return $response == \Password::RESET_LINK_SENT ? API::respond(__('passwords.sent'), 200) : API::respond(__($response), 400);
     }
 
     /**

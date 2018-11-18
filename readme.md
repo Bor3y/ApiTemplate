@@ -6,7 +6,7 @@ Make life easier
 
 - install jwt for laravel Via Composer
 ``` bash
-$ composer install tymon/jwt-auth 1.0.0-rc.3
+$ composer require tymon/jwt-auth 1.0.0-rc.3
 ```
 
 - Configure Auth guard change this lines in "config/auth.php"
@@ -57,7 +57,7 @@ guards' => [
 - install our package Via Composer
 
 ``` bash
-$ composer require bor3y/apitemplate
+$ composer require --dev bor3y/apitemplate
 ```
 
 - publish package using command
@@ -91,6 +91,7 @@ $ php artisan auth:api:publish
         });
     
         Route::group(['middleware' => 'auth:api'], function(){
+            Route::get('/user', ['as' => 'user', 'uses' => 'AuthController@user']);
             Route::post('/logout', ['as' => 'logout', 'uses' => 'AuthController@logout']);
             Route::post('/password/change', 'PasswordController@changePassword')->name('password.change');
         });
