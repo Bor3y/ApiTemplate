@@ -1,57 +1,109 @@
 # ApiTemplate
 
-[![Latest Version on Packagist][ico-version]][link-packagist]
-[![Total Downloads][ico-downloads]][link-downloads]
-[![Build Status][ico-travis]][link-travis]
-[![StyleCI][ico-styleci]][link-styleci]
-
-This is where your description should go. Take a look at [contributing.md](contributing.md) to see a to do list.
+Make life easier
 
 ## Installation
 
-Via Composer
+- install jwt for laravel Via Composer
+``` bash
+$ composer install tymon/jwt-auth 1.0.0-rc.3
+```
+
+- Configure Auth guard change this lines in "config/auth.php"
+``` bash 
+guards' => [
+    'api' => [
+        'driver' => 'jwt',
+        'provider' => 'users',
+	    ],
+```
+
+- add to auth config "config/auth.php"
+``` php
+    /*
+    |--------------------------------------------------------------------------
+    | API Client Credentials
+    |--------------------------------------------------------------------------
+    |
+    */
+
+    'client_id' => env('CLIENT_ID', ''),
+    'client_secret' => env('CLIENT_SECRET'. ''),
+```
+
+- Update your User model to implements "Tymon\JWTAuth\Contracts\JWTSubject"
+``` php
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+    
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
+    {
+        return [];
+    }
+```
+
+- install our package Via Composer
 
 ``` bash
 $ composer require bor3y/apitemplate
 ```
 
-## Usage
-
-## Change log
-
-Please see the [changelog](changelog.md) for more information on what has changed recently.
-
-## Testing
-
+- publish package using command
 ``` bash
-$ composer test
+$ php artisan auth:api:publish
 ```
 
-## Contributing
+- Add namespace to apiRoutes in "app/Providers/RouteServiceProvider.php"
+``` php
+    protected function mapApiRoutes()
+    {
+        Route::prefix('api')
+             ->middleware('api')
+             ->namespace($this->namespace . '\API')
+              ->as('api.')
+             ->group(base_path('routes/api.php'));
+    }
+```
 
-Please see [contributing.md](contributing.md) for details and a todolist.
+- Add basic authentication routes 
+``` php
+    Route::group(['prefix' => 'auth', 'namespace' => 'Auth'], function(){
+        Route::group(['middleware' => 'auth.api.public'], function() {
+            Route::post('/register', 'AuthController@register')->name('register');
+            Route::post('/login', 'AuthController@login')->name('login');
+            Route::group(['prefix' => 'password', 'as' => 'password.'], function(){
+                Route::post('/forget', 'PasswordController@sendResetLinkEmail')->name('forget');
+            });
+            
+            Route::post('/token/refresh', 'AuthController@refreshToken')->name('refreshToken');
+        });
+    
+        Route::group(['middleware' => 'auth:api'], function(){
+            Route::post('/logout', ['as' => 'logout', 'uses' => 'AuthController@logout']);
+            Route::post('/password/change', 'PasswordController@changePassword')->name('password.change');
+        });
+    });
+```
 
-## Security
+- add to kernel routesMiddleware "app/Http/Kernel.php"
+``` php
+    'auth.api.public' => \App\Http\Middleware\AuthorizePublicApiRequests::class
+```
 
-If you discover any security related issues, please email sw.ahmed.elsayed@gmail.com instead of using the issue tracker.
-
-## Credits
-
-- [Ahmed Elsayed][link-author]
-- [All Contributors][link-contributors]
+We are done
 
 ## License
 
 license. Please see the [license file](license.md) for more information.
-
-[ico-version]: https://img.shields.io/packagist/v/bor3y/apitemplate.svg?style=flat-square
-[ico-downloads]: https://img.shields.io/packagist/dt/bor3y/apitemplate.svg?style=flat-square
-[ico-travis]: https://img.shields.io/travis/bor3y/apitemplate/master.svg?style=flat-square
-[ico-styleci]: https://styleci.io/repos/12345678/shield
-
-[link-packagist]: https://packagist.org/packages/bor3y/apitemplate
-[link-downloads]: https://packagist.org/packages/bor3y/apitemplate
-[link-travis]: https://travis-ci.org/bor3y/apitemplate
-[link-styleci]: https://styleci.io/repos/12345678
-[link-author]: https://github.com/bor3y
-[link-contributors]: ../../contributors]

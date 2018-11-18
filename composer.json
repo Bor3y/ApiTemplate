@@ -1,12 +1,11 @@
 {
     "name": "bor3y/apitemplate",
-    "description": ":description",
-    "license": "license",
+    "description": "generate api code base",
+    "license": "MIT",
     "authors": [
         {
             "name": "Ahmed Elsayed",
-            "email": "sw.ahmed.elsayed@gmail.com",
-            "homepage": "author homepage"
+            "email": "sw.ahmed.elsayed@gmail.com"
         }
     ],
     "homepage": "https://github.com/bor3y/apitemplate",
