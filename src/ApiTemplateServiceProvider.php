@@ -2,7 +2,8 @@
 
 namespace Bor3y\ApiTemplate;
 
-use Bor3y\ApiTemplate\Commands\Test;
+use Bor3y\ApiTemplate\Commands\ClientCredentials;
+use Bor3y\ApiTemplate\Commands\PublishCode;
 use Illuminate\Support\ServiceProvider;
 
 class ApiTemplateServiceProvider extends ServiceProvider
@@ -79,7 +80,8 @@ class ApiTemplateServiceProvider extends ServiceProvider
 
         // Registering package commands.
         $this->commands([
-            Test::class
+            PublishCode::class,
+            ClientCredentials::class
         ]);
     }
 }
